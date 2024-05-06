@@ -5,7 +5,13 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    sh 'mvn clean package' // Compiles and packages the application using Maven
+                    try {
+                        sh 'mvn clean package' // Compiles and packages the application using Maven
+                        echo "Build completed successfully."
+                    } catch (Exception e) {
+                        echo "Build failed with error: ${e.getMessage()}"
+                        throw e // Ensure the pipeline fails on error
+                    }
                 }
             }
         }
@@ -13,7 +19,13 @@ pipeline {
         stage('Unit and Integration Tests') {
             steps {
                 script {
-                    sh 'mvn test' // Runs unit and integration tests
+                    try {
+                        sh 'mvn test' // Runs unit and integration tests
+                        echo "Tests executed successfully."
+                    } catch (Exception e) {
+                        echo "Testing failed with error: ${e.getMessage()}"
+                        throw e // Ensure the pipeline fails on error
+                    }
                 }
             }
         }
@@ -21,7 +33,13 @@ pipeline {
         stage('Code Analysis') {
             steps {
                 script {
-                    sh 'sonar-scanner' // Executes SonarQube scanner for static code analysis
+                    try {
+                        sh 'sonar-scanner' // Executes SonarQube scanner for static code analysis
+                        echo "Code analysis completed successfully."
+                    } catch (Exception e) {
+                        echo "Code analysis failed with error: ${e.getMessage()}"
+                        throw e // Ensure the pipeline fails on error
+                    }
                 }
             }
         }
@@ -29,7 +47,13 @@ pipeline {
         stage('Security Scan') {
             steps {
                 script {
-                    sh 'run_security_scan' // Placeholder for the security scan script
+                    try {
+                        sh 'run_security_scan' // Placeholder for the security scan script
+                        echo "Security scan completed successfully."
+                    } catch (Exception e) {
+                        echo "Security scan failed with error: ${e.getMessage()}"
+                        throw e // Ensure the pipeline fails on error
+                    }
                 }
             }
         }
@@ -37,7 +61,13 @@ pipeline {
         stage('Deploy to Staging') {
             steps {
                 script {
-                    sh 'deploy_to_staging.sh' // Deploys the application to a staging environment
+                    try {
+                        sh 'deploy_to_staging.sh' // Deploys the application to a staging environment
+                        echo "Deployment to staging was successful."
+                    } catch (Exception e) {
+                        echo "Deployment to staging failed with error: ${e.getMessage()}"
+                        throw e // Ensure the pipeline fails on error
+                    }
                 }
             }
         }
@@ -45,7 +75,13 @@ pipeline {
         stage('Integration Tests on Staging') {
             steps {
                 script {
-                    sh 'run_integration_tests_staging.sh' // Executes integration tests in the staging environment
+                    try {
+                        sh 'run_integration_tests_staging.sh' // Executes integration tests in the staging environment
+                        echo "Integration tests on staging completed successfully."
+                    } catch (Exception e) {
+                        echo "Integration testing on staging failed with error: ${e.getMessage()}"
+                        throw e // Ensure the pipeline fails on error
+                    }
                 }
             }
         }
@@ -53,7 +89,13 @@ pipeline {
         stage('Deploy to Production') {
             steps {
                 script {
-                    sh 'deploy_to_production.sh' // Deploys the application to the production environment
+                    try {
+                        sh 'deploy_to_production.sh' // Deploys the application to the production environment
+                        echo "Deployment to production was successful."
+                    } catch (Exception e) {
+                        echo "Deployment to production failed with error: ${e.getMessage()}"
+                        throw e // Ensure the pipeline fails on error
+                    }
                 }
             }
         }

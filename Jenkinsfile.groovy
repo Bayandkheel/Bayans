@@ -4,50 +4,71 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'mvn clean package' // Assuming Maven is used
+                script {
+                    sh 'mvn clean package' // Compiles and packages the application using Maven
+                }
             }
         }
 
         stage('Unit and Integration Tests') {
             steps {
-                sh 'mvn test'
+                script {
+                    sh 'mvn test' // Runs unit and integration tests
+                }
             }
         }
 
         stage('Code Analysis') {
             steps {
-                sh 'sonar-scanner'
+                script {
+                    sh 'sonar-scanner' // Executes SonarQube scanner for static code analysis
+                }
             }
         }
 
         stage('Security Scan') {
             steps {
-                sh 'run_security_scan'
+                script {
+                    sh 'run_security_scan' // Placeholder for the security scan script
+                }
             }
         }
 
         stage('Deploy to Staging') {
             steps {
-                sh 'deploy_to_staging.sh'
+                script {
+                    sh 'deploy_to_staging.sh' // Deploys the application to a staging environment
+                }
             }
         }
 
         stage('Integration Tests on Staging') {
             steps {
-                sh 'run_integration_tests_staging.sh'
+                script {
+                    sh 'run_integration_tests_staging.sh' // Executes integration tests in the staging environment
+                }
             }
         }
 
         stage('Deploy to Production') {
             steps {
-                sh 'deploy_to_production.sh'
+                script {
+                    sh 'deploy_to_production.sh' // Deploys the application to the production environment
+                }
             }
         }
     }
 
     post {
-        always {
-            mail bcc: '', body: "Pipeline completed. See details: ${env.BUILD_URL}", from: '', replyTo: '', subject: "Pipeline Notification: ${currentBuild.fullDisplayName}", to: "email@example.com"
+        success {
+            mail to: 'bayandkheel12@gmail.com',
+                 subject: "Success: ${currentBuild.fullDisplayName}",
+                 body: "The build was successful. Check the output at ${env.BUILD_URL}."
+        }
+        failure {
+            mail to: 'bayandkheel12@gmail.com',
+                 subject: "Failed: ${currentBuild.fullDisplayName}",
+                 body: "The build failed. Check the output at ${env.BUILD_URL}."
         }
     }
 }

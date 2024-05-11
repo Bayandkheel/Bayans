@@ -2,14 +2,15 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.6.3'
+        maven 'Maven 3.6.3'  
+        git 'Default'        
     }
 
     stages {
         stage('Build') {
             steps {
                 script {
-                    sh 'mvn clean package'
+                    bat 'mvn clean package'
                 }
             }
         }
@@ -17,7 +18,7 @@ pipeline {
         stage('Unit and Integration Tests') {
             steps {
                 script {
-                    sh 'mvn test'
+                    bat 'mvn test'
                 }
             }
         }
@@ -25,7 +26,7 @@ pipeline {
         stage('Code Analysis') {
             steps {
                 script {
-                    sh 'mvn sonar:sonar'
+                    bat 'mvn sonar:sonar'
                 }
             }
         }
@@ -33,7 +34,7 @@ pipeline {
         stage('Security Scan') {
             steps {
                 script {
-                    sh 'mvn dependency-check:check'
+                    bat 'mvn dependency-check:check'
                 }
             }
         }
@@ -41,7 +42,7 @@ pipeline {
         stage('Package') {
             steps {
                 script {
-                    sh 'docker build -t myapp .'
+                    bat 'docker build -t myapp .' // Ensure Docker is installed and Jenkins has appropriate permissions
                 }
             }
         }
@@ -49,8 +50,13 @@ pipeline {
         stage('Integration Tests on Staging') {
             steps {
                 script {
-                    sh './deploy-to-staging.sh'
-                    sh './run-selenium-tests.sh'
+                    try {
+                        bat 'call deploy-to-staging.bat'
+                        bat 'call run-selenium-tests.bat'
+                    } catch (Exception e) {
+                        echo "Error during staging tests: ${e.getMessage()}"
+                        throw e // Rethrow to mark the build as failed
+                    }
                 }
             }
         }
@@ -58,7 +64,12 @@ pipeline {
         stage('Deploy to Production') {
             steps {
                 script {
-                    sh './deploy-to-production.sh'
+                    try {
+                        bat 'call deploy-to-production.bat'
+                    } catch (Exception e) {
+                        echo "Deployment to production failed: ${e.getMessage()}"
+                        throw e // Rethrow to mark the build as failed
+                    }
                 }
             }
         }

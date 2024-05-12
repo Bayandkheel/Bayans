@@ -2,16 +2,16 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.6.3'  
-        git 'Default'        
+        maven 'Maven 3.6.3'
     }
 
     stages {
         stage('Build') {
             steps {
-                dir ('Bayans'){
-                script {
-                    bat 'mvn clean package'
+                dir('Bayans') {
+                    script {
+                        bat 'mvn clean package'
+                    }
                 }
             }
         }
@@ -43,7 +43,7 @@ pipeline {
         stage('Package') {
             steps {
                 script {
-                    bat 'docker build -t myapp .' 
+                    bat 'docker build -t myapp .'
                 }
             }
         }
@@ -56,7 +56,7 @@ pipeline {
                         bat 'call run-selenium-tests.bat'
                     } catch (Exception e) {
                         echo "Error during staging tests: ${e.getMessage()}"
-                        throw e 
+                        throw e
                     }
                 }
             }
@@ -69,7 +69,7 @@ pipeline {
                         bat 'call deploy-to-production.bat'
                     } catch (Exception e) {
                         echo "Deployment to production failed: ${e.getMessage()}"
-                        throw e 
+                        throw e
                     }
                 }
             }

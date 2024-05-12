@@ -9,6 +9,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
+                dir ('Bayans'){
                 script {
                     bat 'mvn clean package'
                 }
@@ -42,7 +43,7 @@ pipeline {
         stage('Package') {
             steps {
                 script {
-                    bat 'docker build -t myapp .' // Ensure Docker is installed and Jenkins has appropriate permissions
+                    bat 'docker build -t myapp .' 
                 }
             }
         }
@@ -55,7 +56,7 @@ pipeline {
                         bat 'call run-selenium-tests.bat'
                     } catch (Exception e) {
                         echo "Error during staging tests: ${e.getMessage()}"
-                        throw e // Rethrow to mark the build as failed
+                        throw e 
                     }
                 }
             }
@@ -68,7 +69,7 @@ pipeline {
                         bat 'call deploy-to-production.bat'
                     } catch (Exception e) {
                         echo "Deployment to production failed: ${e.getMessage()}"
-                        throw e // Rethrow to mark the build as failed
+                        throw e 
                     }
                 }
             }
